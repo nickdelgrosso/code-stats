@@ -1,4 +1,3 @@
 # Git Commit History Stats
 
-prints all git commits in a repo.
-
+Get line counts and complexity measurements from a Python package's git repo's history.

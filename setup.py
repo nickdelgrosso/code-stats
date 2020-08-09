@@ -8,5 +8,5 @@ setup(
     license='',
     author='Nicholas A. Del Grosso',
     author_email='delgrosso.nick@gmail.com',
-    description=''
+    description="Get line counts and complexity measurements from a Python package's git repo's history.",
 )
