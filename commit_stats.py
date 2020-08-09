@@ -21,9 +21,12 @@ class CommitStats:
     mean_cyclomatic_complexity: float
 
 
-def analyze_history(repo: Path, max_history: int, exclude: Optional[str]) -> Iterable[CommitStats]:
+def analyze_history(repo: Path, max_history: Optional[int] = None, exclude: Optional[str] = None) -> Iterable[CommitStats]:
     """Yields a Python CommitStats object for each commit in the repo's history."""
-    for commit in tqdm(list_commits(repo=repo)[:max_history], desc="Writing Commits to CSV"):
+    commits = list_commits(repo=repo)
+    if max_history:
+        commits = commits[:max_history]
+    for commit in tqdm(commits, desc="Writing Commits to CSV"):
         checkout(repo, commit)
         python = [stat for stat in count_lines(repo, exclude_pattern=exclude) if stat.language == 'Python'][0]
         yield CommitStats(
@@ -41,7 +44,7 @@ def analyze_history(repo: Path, max_history: int, exclude: Optional[str]) -> Ite
 if __name__ == '__main__':
 
     repo = Path("D:/ProgrammingProjects/suite2p2/suite2p")
-    max_history = 30
+    max_history = None #30
     exclude = "*gui*.py"
     csv_output_file = Path("./stats2.csv")
 
