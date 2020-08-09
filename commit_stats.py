@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 from csv import DictWriter
+from typing import Optional
 
 from tqdm import tqdm
 
@@ -21,24 +22,30 @@ class CommitStats:
     mean_cyclomatic_complexity: float
 
 
-repo = Path("D:/ProgrammingProjects/suite2p2/suite2p")
-max_history = 3
-exclude = "*gui*.py"
+def analyze_history(repo: Path, max_history: int, exclude: Optional[str], csv_output_file: Path) -> None:
+    with csv_output_file.open(mode="w", newline="") as f:
+        csv_writer = DictWriter(f, fieldnames=[field.name for field in fields(CommitStats)])
+        csv_writer.writeheader()
+        for commit in tqdm(list_commits(repo=repo)[:max_history], desc="Writing Commits to CSV"):
+            checkout(repo, commit)
+            python = [stat for stat in count_lines(repo, exclude_pattern=exclude) if stat.language == 'Python'][0]
+            stats = CommitStats(
+                hash=commit,
+                timestamp=timestamp(repo, commit),
+                language=python.language,
+                files=python.files,
+                loc=python.lines_of_code,
+                comments=python.comments,
+                mean_cyclomatic_complexity=mean_cyclomatic_complexity(repo, exclude_pattern=exclude)
+            )
+            csv_writer.writerow(asdict(stats))
 
-csv_output_file = Path("./stats.csv")
-with csv_output_file.open(mode="w", newline="") as f:
-    csv_writer = DictWriter(f, fieldnames=[field.name for field in fields(CommitStats)])
-    csv_writer.writeheader()
-    for commit in tqdm(list_commits(repo=repo)[:max_history], desc="Writing Commits to CSV"):
-        checkout(repo, commit)
-        python = [stat for stat in count_lines(repo, exclude_pattern=exclude) if stat.language == 'Python'][0]
-        stats = CommitStats(
-            hash=commit,
-            timestamp=timestamp(repo, commit),
-            language=python.language,
-            files=python.files,
-            loc=python.lines_of_code,
-            comments=python.comments,
-            mean_cyclomatic_complexity=mean_cyclomatic_complexity(repo, exclude_pattern=exclude)
-        )
-        csv_writer.writerow(asdict(stats))
+
+
+if __name__ == '__main__':
+    repo = Path("D:/ProgrammingProjects/suite2p2/suite2p")
+    max_history = 3
+    exclude = "*gui*.py"
+    csv_output_file = Path("./stats.csv")
+
+    analyze_history(repo=repo, max_history=max_history, exclude=exclude, csv_output_file=csv_output_file)
