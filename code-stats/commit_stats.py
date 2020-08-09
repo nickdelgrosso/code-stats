@@ -40,16 +40,17 @@ def analyze_history(repo: Path, max_history: Optional[int] = None, exclude: Opti
         )
 
 
+def yield_to_csv(stats_gen: Iterable[CommitStats], csv_filename: str) -> None:
+    with csv_filename.open(mode="w", newline="") as f:
+        csv_writer = DictWriter(f, fieldnames=[field.name for field in fields(CommitStats)])
+        csv_writer.writeheader()
+        for stats in stats_gen:
+            csv_writer.writerow(asdict(stats))
+
 
 if __name__ == '__main__':
 
-    repo = Path("D:/ProgrammingProjects/suite2p2/suite2p")
-    max_history = None #30
-    exclude = "*gui*.py"
-    csv_output_file = Path("./stats_suite2p.csv")
-
-    with csv_output_file.open(mode="w", newline="") as f:
-        csv_writer = DictWriter(f, fieldnames=[field.name for field in fields(CommitStats)])
-        csv_writer.writeheader()
-        for stats in analyze_history(repo=repo, max_history=max_history, exclude=exclude):
-            csv_writer.writerow(asdict(stats))
+    stats_gen = analyze_history(
+        repo=Path("D:/ProgrammingProjects/suite2p2/suite2p"),
+        max_history=None, exclude="*gui*.py")
+    yield_to_csv(stats_gen, Path("./stats_suite2p.csv"))

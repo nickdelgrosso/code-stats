@@ -1,1 +1,1 @@
-from .commit_stats import analyze_history
+from .commit_stats import analyze_history, yield_to_csv
