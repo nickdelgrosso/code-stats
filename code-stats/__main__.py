@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from pathlib import Path
 
 from . import yield_to_csv, analyze_history
 
@@ -8,4 +9,4 @@ parser.add_argument("output_csv", help="The csv file path you want to create.")
 
 args = parser.parse_args()
 
-yield_to_csv(analyze_history(repo=args.project_path), args.output_csv)
+yield_to_csv(analyze_history(repo=Path(args.project_path)), Path(args.output_csv))

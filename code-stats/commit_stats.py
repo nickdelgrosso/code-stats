@@ -2,12 +2,13 @@ from pathlib import Path
 from datetime import datetime
 from csv import DictWriter
 from typing import Optional, Iterable
+from dataclasses import dataclass, asdict, fields
+
 from tqdm import tqdm
 
-from commits import list_commits, timestamp, checkout
-from line_counts import count_lines
-from dataclasses import dataclass, asdict, fields
-from cyclomatic_complexity import mean_cyclometric_complexity
+from .commits import list_commits, timestamp, checkout
+from .line_counts import count_lines
+from .cyclomatic_complexity import mean_cyclometric_complexity
 
 
 @dataclass
@@ -28,16 +29,19 @@ def analyze_history(repo: Path, max_history: Optional[int] = None, exclude: Opti
         commits = commits[:max_history]
     for commit in tqdm(commits, desc="Writing Commits to CSV"):
         checkout(repo, commit)
-        python = [stat for stat in count_lines(repo, exclude_pattern=exclude) if stat.language == 'Python'][0]
-        yield CommitStats(
-            hash=commit,
-            timestamp=timestamp(repo, commit),
-            language=python.language,
-            files=python.files,
-            loc=python.lines_of_code,
-            comments=python.comments,
-            mean_cyclometric_complexity=mean_cyclometric_complexity(repo, exclude_pattern=exclude)
-        )
+        line_counts = count_lines(repo, exclude_pattern=exclude)
+        print(line_counts)
+        python = [stat for stat in line_counts if stat.language == 'Python']
+        if len(python) > 0:
+            yield CommitStats(
+                hash=commit,
+                timestamp=timestamp(repo, commit),
+                language=python.language,
+                files=python.files,
+                loc=python.lines_of_code,
+                comments=python.comments,
+                mean_cyclometric_complexity=mean_cyclometric_complexity(repo, exclude_pattern=exclude)
+            )
 
 
 def yield_to_csv(stats_gen: Iterable[CommitStats], csv_filename: str) -> None:
