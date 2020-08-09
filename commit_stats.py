@@ -7,7 +7,7 @@ from tqdm import tqdm
 from commits import list_commits, timestamp, checkout
 from line_counts import count_lines
 from dataclasses import dataclass, asdict, fields
-from cyclomatic_complexity import mean_cyclomatic_complexity
+from cyclomatic_complexity import mean_cyclometric_complexity
 
 
 @dataclass
@@ -18,7 +18,7 @@ class CommitStats:
     files: int
     loc: int
     comments: int
-    mean_cyclomatic_complexity: float
+    mean_cyclometric_complexity: float
 
 
 def analyze_history(repo: Path, max_history: Optional[int] = None, exclude: Optional[str] = None) -> Iterable[CommitStats]:
@@ -36,7 +36,7 @@ def analyze_history(repo: Path, max_history: Optional[int] = None, exclude: Opti
             files=python.files,
             loc=python.lines_of_code,
             comments=python.comments,
-            mean_cyclomatic_complexity=mean_cyclomatic_complexity(repo, exclude_pattern=exclude)
+            mean_cyclometric_complexity=mean_cyclometric_complexity(repo, exclude_pattern=exclude)
         )
 
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     repo = Path("D:/ProgrammingProjects/suite2p2/suite2p")
     max_history = None #30
     exclude = "*gui*.py"
-    csv_output_file = Path("./stats2.csv")
+    csv_output_file = Path("./stats_suite2p.csv")
 
     with csv_output_file.open(mode="w", newline="") as f:
         csv_writer = DictWriter(f, fieldnames=[field.name for field in fields(CommitStats)])
