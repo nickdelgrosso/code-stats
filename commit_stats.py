@@ -2,10 +2,12 @@ from pathlib import Path
 from datetime import datetime
 from csv import DictWriter
 
+from tqdm import tqdm
+
 from commits import list_commits, timestamp, checkout
 from line_counts import count_lines
 from dataclasses import dataclass, asdict, fields
-from tqdm import tqdm
+from cyclomatic_complexity import mean_cyclomatic_complexity
 
 
 @dataclass
@@ -16,6 +18,7 @@ class CommitStats:
     files: int
     loc: int
     comments: int
+    mean_cyclomatic_complexity: float
 
 
 
@@ -36,5 +39,6 @@ with csv_output_file.open(mode="w", newline="") as f:
             files=python.files,
             loc=python.lines_of_code,
             comments=python.comments,
+            mean_cyclomatic_complexity=mean_cyclomatic_complexity(repo.joinpath("suite2p"), exclude_pattern="*gui*.py")
         )
         csv_writer.writerow(asdict(stats))
