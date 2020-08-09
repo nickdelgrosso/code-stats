@@ -1,5 +1,3 @@
-__all__ = ['CommitHash', 'list_commits', 'timestamp']
-
 from typing import NewType, List
 from pathlib import Path
 from subprocess import Popen, PIPE

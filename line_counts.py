@@ -12,7 +12,7 @@ class LineCounts:
     comments: int
 
 
-def line_counts(repo: Path) -> Iterable[LineCounts]:
+def count_lines(repo: Path) -> Iterable[LineCounts]:
     proc = Popen('pygount suite2p --format=summary', stdout=PIPE, stderr=PIPE,
                  cwd=str(repo))
     lines = proc.stdout.readlines()
@@ -27,6 +27,3 @@ def line_counts(repo: Path) -> Iterable[LineCounts]:
             lines_of_code=int(stats['Code']),
             comments=int(stats['Comment'])
         )
-
-
-print(*line_counts("D:/ProgrammingProjects/suite2p2"))
