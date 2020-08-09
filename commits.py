@@ -19,3 +19,8 @@ def timestamp(repo: Path, commit: CommitHash) -> datetime:
     proc = Popen('git show -s --format=%ci', stdout=PIPE, stderr=PIPE, cwd=str(repo))
     timestamp = datetime.strptime(proc.stdout.read().decode().strip(), "%Y-%m-%d %H:%M:%S %z")
     return timestamp
+
+
+def checkout(repo: Path, commit: CommitHash) -> None:
+    Popen(f'git checkout {commit}', cwd=str(repo), stdout=PIPE, stderr=PIPE)
+
