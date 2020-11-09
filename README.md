@@ -18,8 +18,9 @@ from pathlib import Path
 from code-stats import analyze_history, yield_to_csv
 
 stats_gen = analyze_history(
-    repo=Path("D:/ProgrammingProjects/suite2p2/suite2p"), 
-    max_history=None, exclude="*gui*.py"
+    repo=Path("D:/ProgrammingProjects/suite2p2/suite2p"),  # Where the python package is located
+    max_history=None,  # How far in the past you want to explore
+    exclude="*gui*.py",  # A simple grep pattern for excluding certain filenames.
 ) 
 yield_to_csv(stats_gen, Path("./stats_suite2p.csv")) 
 ```
