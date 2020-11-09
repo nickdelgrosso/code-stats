@@ -2,10 +2,29 @@
 
 Get line counts and complexity measurements from a Python package's git repo's history.
 
-
-## Minimal Usage
+## Installation
 
 ```
 pip install git+https://github.com/nickdelgrosso/code-stats
+```
+
+
+## Minimal Usage
+
+### As a Python package
+
+```python
+from pathlib import Path
+from code-stats import analyze_history, yield_to_csv
+
+stats_gen = analyze_history(
+    repo=Path("D:/ProgrammingProjects/suite2p2/suite2p"), 
+    max_history=None, exclude="*gui*.py"
+) 
+yield_to_csv(stats_gen, Path("./stats_suite2p.csv")) 
+```
+
+### As a command-line tool
+```
 code-stats path/to/repo repo_lines_and_complexity_history.csv
 ```
